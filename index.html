@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBTZ Chat Bot - Complete Answer Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant {
+            background: white;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message.typing {
+            background: white;
+            color: #999;
+            align-self: flex-start;
+            font-style: italic;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendBtn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #sendBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #sendBtn:active {
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 BBTZ Chat Bot </h1>
+            <p>I answer ANY question - including datasets, money, love, career, and more!</p>
+        </div>
+        <div id="messages"></div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Ask me anything about datasets, money, love, work, school...">
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let history = [];
+
+        function addMessage(role, text) {
+            const box = document.getElementById("messages");
+            if (!box) return;
+            
+            const div = document.createElement("div");
+            div.classList.add("message", role);
+            div.textContent = text;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+            return div;
+        }
+        
+        async function getSmartResponse(userMessage) {
+            await new Promise(resolve => setTimeout(resolve, 600));
+            
+            const msg = userMessage.toLowerCase();
+            
+            // ============= DATASET QUESTIONS =============
+            if (msg.includes('dataset') || msg.includes('data set') || msg.includes('data analysis') || msg.includes('data science') || msg.includes('csv') || msg.includes('excel data') || msg.includes('database') || msg.includes('dataframe') || msg.includes('pandas') || msg.includes('data cleaning')) {
+                
+                if (msg.includes('what is dataset') || msg.includes('what is a dataset')) {
+                    return "📊 WHAT IS A DATASET?\n\nA dataset is a collection of data organized in a specific format, usually as a table with rows and columns.\n\nExample:\n| Name | Age | City |\n|------|-----|------|\n| John | 25  | NY   |\n| Mary | 30  | LA   |\n\nRows = individual records (observations)\nColumns = features (variables/attributes)\n\nDatasets are used for:\n• Analysis and statistics\n• Machine learning\n• Research and reports\n• Business intelligence\n\nWant to learn more about working with datasets?";
+                }
+                
+                else if (msg.includes('how to clean') || msg.includes('data cleaning') || msg.includes('clean dataset')) {
+                    return "🧹 DATA CLEANING TIPS:\n\nCommon issues and solutions:\n\n1. MISSING VALUES:\n• Remove rows with missing data\n• Fill with mean/median/mode\n• Use forward/backward fill\n\n2. DUPLICATES:\n• Use drop_duplicates() in pandas\n• Identify unique records\n\n3. OUTLIERS:\n• Use Z-score method\n• IQR (Interquartile Range)\n• Visualize with box plots\n\n4. FORMAT ISSUES:\n• Standardize date formats\n• Convert data types\n• Fix inconsistent categories\n\n5. TEXT DATA:\n• Remove extra spaces\n• Convert to lowercase\n• Remove special characters\n\nWant specific code examples?";
+                }
+                
+                else if (msg.includes('analyze') || msg.includes('analysis')) {
+                    return "📈 DATA ANALYSIS METHODS:\n\n1. DESCRIPTIVE STATISTICS:\n• Mean, median, mode\n• Standard deviation\n• Min, max, range\n• Percentiles\n\n2. DATA VISUALIZATION:\n• Bar charts (categories)\n• Line charts (trends)\n• Histograms (distribution)\n• Scatter plots (correlation)\n• Heatmaps (relationships)\n\n3. EXPLORATORY ANALYSIS:\n• Check data types\n• Summary statistics\n• Missing value count\n• Correlation matrix\n\n4. ADVANCED ANALYSIS:\n• Regression analysis\n• Time series analysis\n• Clustering\n• Hypothesis testing\n\nWhat specific analysis do you need help with?";
+                }
+                
+                else if (msg.includes('visualization') || msg.includes('visualize') || msg.includes('chart') || msg.includes('graph') || msg.includes('plot')) {
+                    return "📊 DATA VISUALIZATION GUIDE:\n\nCHOOSE THE RIGHT CHART:\n\n📊 BAR CHART - Compare categories\n• Sales by product\n• Population by city\n\n📈 LINE CHART - Show trends over time\n• Stock prices\n• Temperature changes\n\n🥧 PIE CHART - Show proportions\n• Market share\n• Budget allocation\n\n📉 HISTOGRAM - Show distribution\n• Age distribution\n• Test scores\n\n🔵 SCATTER PLOT - Show relationships\n• Height vs weight\n• Advertising vs sales\n\n🌡️ HEATMAP - Show correlations\n• Feature relationships\n• Confusion matrix\n\nTOOLS FOR VISUALIZATION:\n• Python: Matplotlib, Seaborn, Plotly\n• R: ggplot2\n• Tableau, Power BI\n• Excel charts\n\nWant me to explain how to create any specific chart?";
+                }
+                
+                else if (msg.includes('pandas') || msg.includes('dataframe')) {
+                    return "🐼 PANDAS DATAFRAME TUTORIAL:\n\nIMPORT PANDAS:\nimport pandas as pd\n\nCREATE DATAFRAME:\ndf = pd.DataFrame({'Name': ['John', 'Mary'], 'Age': [25, 30]})\n\nVIEW DATA:\ndf.head() - first 5 rows\ndf.info() - data types\ndf.describe() - statistics\n\nSELECT DATA:\ndf['column'] - single column\ndf[['col1', 'col2']] - multiple columns\ndf.loc[0] - row by index\ndf.iloc[0:5] - first 5 rows\n\nFILTER DATA:\ndf[df['Age'] > 25]\ndf[df['Name'].isin(['John', 'Mary'])]\n\nMODIFY DATA:\ndf['new_col'] = values\ndf.drop('column', axis=1)\ndf.rename(columns={'old':'new'})\n\nGROUP DATA:\ndf.groupby('category').mean()\ndf.groupby('category').agg(['mean', 'sum'])\n\nMERGE DATASETS:\npd.merge(df1, df2, on='key')\npd.concat([df1, df2])\n\nNeed help with specific pandas operations?";
+                }
+                
+                else if (msg.includes('machine learning') || msg.includes('ml') || msg.includes('model')) {
+                    return "🤖 MACHINE LEARNING WITH DATASETS:\n\n1. PREPARE DATA:\n• Split into train/test (80/20 or 70/30)\n• Scale features (StandardScaler, MinMaxScaler)\n• Handle categorical variables (one-hot encoding)\n\n2. CHOOSE ALGORITHM:\n\nCLASSIFICATION (predict categories):\n• Logistic Regression\n• Random Forest\n• SVM\n• Neural Networks\n\nREGRESSION (predict numbers):\n• Linear Regression\n• Decision Trees\n• Gradient Boosting\n\nCLUSTERING (group similar items):\n• K-Means\n• DBSCAN\n• Hierarchical\n\n3. TRAIN MODEL:\nfrom sklearn.model_selection import train_test_split\nX_train, X_test, y_train, y_test = train_test_split(X, y)\nmodel.fit(X_train, y_train)\n\n4. EVALUATE:\n• Accuracy, Precision, Recall (classification)\n• MSE, MAE, R² (regression)\n• Silhouette score (clustering)\n\nWant specific ML advice for your dataset?";
+                }
+                
+                else if (msg.includes('big data') || msg.includes('large dataset')) {
+                    return "💾 WORKING WITH LARGE DATASETS:\n\nCHALLENGES:\n• Memory limits\n• Slow processing\n• Storage issues\n\nSOLUTIONS:\n\n1. USE CHUNKING:\nfor chunk in pd.read_csv('file.csv', chunksize=10000):\n    process(chunk)\n\n2. OPTIMIZE DATA TYPES:\ndf['col'] = df['col'].astype('float32')  # instead of float64\n\n3. USE DATABASE:\n• SQLite, PostgreSQL\n• MongoDB\n\n4. BIG DATA TOOLS:\n• Apache Spark\n• Dask\n• Vaex\n• Polars\n\n5. SAMPLING:\n• Random sampling\n• Stratified sampling\n\n6. FILTER EARLY:\n• Load only needed columns\n• Filter rows before loading\n\nNeed help with your specific large dataset?";
+                }
+                
+                else if (msg.includes('excel') || msg.includes('spreadsheet')) {
+                    return "📑 WORKING WITH EXCEL DATASETS:\n\nREAD EXCEL IN PYTHON:\nimport pandas as pd\ndf = pd.read_excel('file.xlsx', sheet_name='Sheet1')\n\nCOMMON OPERATIONS:\n\n1. CLEAN DATA:\n• Remove duplicates: df.drop_duplicates()\n• Fill missing: df.fillna(0)\n• Remove blanks: df.dropna()\n\n2. ANALYZE:\n• Pivot tables: pd.pivot_table(df, values='sales', index='product')\n• Summary: df.groupby('category').sum()\n\n3. SAVE BACK TO EXCEL:\ndf.to_excel('cleaned_file.xlsx', index=False)\n\nEXCEL FORMULAS FOR DATASETS:\n• VLOOKUP/XLOOKUP - Find values\n• SUMIF/COUNTIF - Conditional calculations\n• IF statements - Logic\n• PivotTables - Summarize data\n\nNeed help with specific Excel dataset tasks?";
+                }
+                
+                else if (msg.includes('json') || msg.includes('api')) {
+                    return "🔌 WORKING WITH JSON DATASETS:\n\nREAD JSON:\nimport json\nimport pandas as pd\n\n# From file\nwith open('data.json') as f:\n    data = json.load(f)\n\n# From API response\nimport requests\nresponse = requests.get('https://api.example.com/data')\ndata = response.json()\n\n# Convert to DataFrame\ndf = pd.json_normalize(data)\n\nNESTED JSON:\n# Flatten nested structures\ndf = pd.json_normalize(data, record_path=['items'], meta=['id'])\n\nSAVE TO JSON:\ndf.to_json('output.json', orient='records')\n\nCOMMON API DATASETS:\n• COVID-19 data\n• Weather data\n• Stock market data\n• Social media data\n\nNeed help with a specific JSON dataset?";
+                }
+                
+                else if (msg.includes('sql') || msg.includes('database query')) {
+                    return "🗄️ SQL FOR DATASETS:\n\nBASIC QUERIES:\n\nSELECT DATA:\nSELECT * FROM table_name;\nSELECT column1, column2 FROM table_name;\n\nFILTER:\nSELECT * FROM table WHERE condition;\nSELECT * FROM users WHERE age > 18;\n\nSORT:\nSELECT * FROM table ORDER BY column DESC;\n\nGROUP:\nSELECT category, COUNT(*) FROM table GROUP BY category;\n\nJOIN TABLES:\nSELECT * FROM table1 \nJOIN table2 ON table1.id = table2.id;\n\nAGGREGATE FUNCTIONS:\n• COUNT(*) - count rows\n• SUM(column) - sum values\n• AVG(column) - average\n• MAX/MIN - highest/lowest\n\nPYTHON + SQL:\nimport sqlite3\nconn = sqlite3.connect('database.db')\ndf = pd.read_sql_query(\"SELECT * FROM table\", conn)\n\nNeed help with SQL queries for your dataset?";
+                }
+                
+                else if (msg.includes('sample dataset') || msg.includes('example dataset') || msg.includes('practice dataset')) {
+                    return "📚 SAMPLE DATASETS FOR PRACTICE:\n\nBUILT-IN DATASETS (Python):\n\nSEABORN:\nimport seaborn as sns\n• tips - restaurant tips\n• iris - flower species\n• titanic - passenger data\n• penguins - penguin measurements\n\nSKLEARN:\nfrom sklearn import datasets\n• load_iris() - classification\n• load_diabetes() - regression\n• load_wine() - wine classification\n• load_breast_cancer() - medical data\n\nREAL-WORLD DATASETS (download):\n\n1. Kaggle Datasets:\n• Titanic - machine learning practice\n• Housing prices - regression\n• COVID-19 - time series\n\n2. UCI Repository:\n• Adult Census Income\n• Heart Disease\n• Wine Quality\n\n3. Google Dataset Search:\n• Search for any topic\n\n4. Government Data:\n• data.gov\n• World Bank Open Data\n\nWant recommendations for your specific use case?";
+                }
+                
+                else if (msg.includes('statistics') || msg.includes('statistical')) {
+                    return "📊 STATISTICS FOR DATASETS:\n\nDESCRIPTIVE STATISTICS:\n\nCENTRAL TENDENCY:\n• Mean: average value\n• Median: middle value\n• Mode: most frequent value\n\nDISPERSION:\n• Range: max - min\n• Variance: spread from mean\n• Standard deviation: sqrt(variance)\n• IQR: Q3 - Q1\n\nCORRELATION:\n• Pearson: linear relationship (-1 to 1)\n• Spearman: monotonic relationship\n\nHYPOTHESIS TESTING:\n• T-test: compare means\n• Chi-square: test independence\n• ANOVA: compare multiple groups\n\nPYTHON CODE:\nimport scipy.stats as stats\n\n# T-test\nt_stat, p_value = stats.ttest_ind(group1, group2)\n\n# Correlation\ncorrelation = df['col1'].corr(df['col2'])\n\nNeed help with statistical analysis of your dataset?";
+                }
+                
+                else {
+                    return "📊 DATASET HELP - I can assist with:\n\n✅ Dataset basics and definitions\n✅ Data cleaning and preprocessing\n✅ Data analysis techniques\n✅ Data visualization (charts, graphs)\n✅ Pandas DataFrame operations\n✅ Machine learning with datasets\n✅ Working with large datasets\n✅ Excel, CSV, JSON, SQL data\n✅ Sample datasets for practice\n✅ Statistical analysis\n\nPlease ask me a specific question about datasets, such as:\n• 'What is a dataset?'\n• 'How to clean a dataset?'\n• 'How to analyze data with pandas?'\n• 'How to visualize data?'\n• 'Give me sample datasets'\n\nWhat would you like to know about datasets? 📚";
+                }
+            }
+            
+            // ============= MONEY QUESTIONS =============
+            else if (msg.includes('money') || msg.includes('rich') || msg.includes('wealth') || msg.includes('cash') || msg.includes('dollar') || msg.includes('broke') || msg.includes('poor') || msg.includes('finance') || msg.includes('invest')) {
+                if (msg.includes('have money') || msg.includes('got money') || msg.includes('you have')) {
+                    return "That's a fair question! 💰 As an AI, I don't actually have money - I'm a computer program. But I can teach you how to make, save, and invest money!\n\nHere's what I can help with:\n✅ Ways to make money online and offline\n✅ Saving strategies that work\n✅ Investing for beginners (stocks, crypto, real estate)\n✅ Paying off debt faster\n✅ Budgeting tips\n✅ Side hustles that earn $500-$5000/month\n\nWhat money topic interests you?";
+                } else {
+                    return "💰 MONEY & FINANCE HELP:\n\nMAKE MONEY:\n• Freelancing (Upwork, Fiverr) - earn $20-200/hour\n• Online business (dropshipping, print on demand)\n• Content creation (YouTube, TikTok)\n• Part-time jobs and side hustles\n\nSAVE MONEY:\n• Budgeting methods that work\n• Cutting unnecessary expenses\n• Using cashback apps\n\nINVEST MONEY:\n• Stock market for beginners\n• Real estate investing\n• Retirement accounts (401k, IRA)\n• Cryptocurrency basics\n\nWhat specific money question do you have?";
+                }
+            }
+            
+            // ============= LOVE & RELATIONSHIPS =============
+            else if (msg.includes('love') || msg.includes('girlfriend') || msg.includes('boyfriend') || msg.includes('crush') || msg.includes('dating') || msg.includes('relationship') || msg.includes('romance') || msg.includes('married')) {
+                if (msg.includes('you love')) {
+                    return "That's sweet! 💙 As an AI, I don't experience human emotions like love. But I can help YOU with love and relationships!\n\nI can give advice on:\n• Dating tips\n• Relationship communication\n• Understanding your feelings\n• Getting over breakups\n• Building stronger connections\n\nTell me about your situation - I'm here to help!";
+                } else {
+                    return "💕 RELATIONSHIP ADVICE:\n\nDATING:\n• How to ask someone out\n• First date tips\n• Building confidence\n• Online dating strategies\n\nRELATIONSHIP HELP:\n• Improving communication\n• Resolving arguments\n• Building trust\n• Long-distance relationships\n\nBREAKUP SUPPORT:\n• Healing and moving on\n• Self-care strategies\n\nWhat specific relationship advice do you need?";
+                }
+            }
+            
+            // ============= JOKES =============
+            else if (msg.includes('joke') || msg.includes('funny') || msg.includes('make me laugh')) {
+                const jokes = [
+                    "Why don't scientists trust atoms? Because they make up everything! 😂",
+                    "What do you call a fake noodle? An impasta! 🍝",
+                    "Why did the scarecrow win an award? He was outstanding in his field! 🌾",
+                    "What do you call a bear with no teeth? A gummy bear! 🐻",
+                    "Why did the math book look so sad? Because it had too many problems! 📚"
+                ];
+                return jokes[Math.floor(Math.random() * jokes.length)] + "\n\nWant another joke? Just ask!";
+            }
+            
+            // ============= TIME & DATE =============
+            else if (msg.includes('time') || msg.includes('date') || msg.includes('today')) {
+                const now = new Date();
+                const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                return `📅 Today is ${date}\n🕐 Current time is ${time}\n\nIs there anything else you'd like to know?`;
+            }
+            
+            // ============= WEATHER =============
+            else if (msg.includes('weather') || msg.includes('rain') || msg.includes('sunny')) {
+                return "🌤️ I can't check live weather data, but here's how you can:\n\n• Check weather.com\n• Google 'weather near me'\n• Use your phone's weather app\n\nWould you like me to explain weather concepts instead?";
+            }
+            
+            // ============= CAREER / JOB =============
+            else if (msg.includes('job') || msg.includes('career') || msg.includes('work') || msg.includes('interview') || msg.includes('resume')) {
+                return "💼 CAREER HELP:\n\nRESUME TIPS:\n• Keep it clean and professional (1-2 pages)\n• Use action verbs (managed, created, led)\n• QUANTIFY achievements (increased sales 20%)\n• Tailor to EACH job application\n\nINTERVIEW PREP:\n• Research the company\n• Practice STAR method\n• Prepare questions to ask\n• Send thank-you email\n\nFINDING JOBS:\n• LinkedIn, Indeed, Glassdoor\n• Company websites\n• Networking (70% of jobs!)\n\nWhat specific career help do you need?";
+            }
+            
+            // ============= SCHOOL / HOMEWORK =============
+            else if (msg.includes('homework') || msg.includes('school') || msg.includes('study') || msg.includes('exam') || msg.includes('test')) {
+                return "📚 HOMEWORK HELP:\n\nI can help with:\n• Math (algebra, calculus, statistics)\n• Science (biology, chemistry, physics)\n• History (world history, events)\n• English (essays, grammar)\n• Study strategies\n• Test preparation\n\nWhat subject and question do you need help with?";
+            }
+            
+            // ============= GREETINGS =============
+            else if (msg.match(/^(hi|hello|hey|greetings)/)) {
+                return "Hello there! 👋 I'm your AI assistant. I can answer questions about datasets, money, love, careers, school, and more! What would you like to know today?";
+            }
+            
+            // ============= HOW ARE YOU =============
+            else if (msg.includes('how are you')) {
+                return "I'm doing great, thank you for asking! 🌟 I'm ready to help you with any question. What can I do for you today?";
+            }
+            
+            // ============= ASKING PERMISSION =============
+            else if (msg.includes('can i ask') || msg.includes('may i ask')) {
+                return "ABSOLUTELY! 🤗 You can ask me ANYTHING - no permission needed! I'm here to answer your questions. Go ahead, what's your question?";
+            }
+            
+            // ============= THANKS =============
+            else if (msg.includes('thank') || msg.includes('thanks')) {
+                return "You're very welcome! 😊 I'm happy to help. Is there anything else you'd like to know?";
+            }
+            
+            // ============= GOODBYE =============
+            else if (msg.includes('bye') || msg.includes('goodbye')) {
+                return "Goodbye! 👋 It was nice chatting with you. Come back anytime you need help! Take care! 🌟";
+            }
+            
+            // ============= DEFAULT - FOR ANYTHING ELSE =============
+            else {
+                return `Thank you for asking: "${userMessage}"\n\nI want to give you a real answer! Here's what I can help with:\n\n📊 DATASETS - Data cleaning, analysis, visualization, pandas, SQL\n💰 MONEY - Making money, saving, investing, budgeting\n💕 LOVE - Dating advice, relationship help\n💼 CAREER - Resumes, interviews, jobs\n📚 SCHOOL - Homework help, study tips\n😂 JOKES - Funny jokes to make you laugh\n\nCould you tell me more about what you're looking for? I'm here to help with ANY question you have! 🌟`;
+            }
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const userText = input.value.trim();
+            if (!userText) return;
+            
+            addMessage("user", userText);
+            history.push({ role: "user", content: userText });
+            input.value = "";
+            
+            const typingDiv = addMessage("assistant", "🤔 Thinking...");
+            typingDiv.classList.add("typing");
+            
+            const response = await getSmartResponse(userText);
+            
+            typingDiv.remove();
+            addMessage("assistant", response);
+            history.push({ role: "assistant", content: response });
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const input = document.getElementById("userInput");
+            const sendBtn = document.getElementById("sendBtn");
+            
+            if (input) {
+                input.addEventListener("keypress", handleKeyPress);
+            }
+            
+            if (sendBtn) {
+                sendBtn.addEventListener("click", sendMessage);
+            }
+            
+            addMessage("assistant", "👋 HELLO! I'm your BBTZ CHAT BOT! \n I can answer questions about this: \n\n📊 DATASETS - Data cleaning, analysis, visualization, pandas, SQL\n💰 MONEY - Making money, saving, investing, budgeting\n💕 LOVE - Dating advice, relationship help\n💼 CAREER - Resumes, interviews, jobs\n📚 SCHOOL - Homework help, study tips\n😂 JOKES - Funny jokes to make you laugh \n\n");
+            
+            input.focus();
+        });
+    </script>
+</body>
+</html>
